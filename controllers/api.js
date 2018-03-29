@@ -1,4 +1,5 @@
 const models = require('../database/models/index')
+const boundaryAPI = require('./checkboundaries')
 
 const createUser = async (body) => {
   try
@@ -61,6 +62,7 @@ const createPOI = async (body) => {
   try
   {
     console.log('POI created');
+    let cityName = boundaryAPI.checkBoundaries(body.latitude, body.longitude)
     console.log(body);
   }
   catch (err)
