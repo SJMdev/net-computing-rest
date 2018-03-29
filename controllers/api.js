@@ -28,16 +28,18 @@ const updateUser = async (body) => {
       ...body
     }
 
-    console.log('---------------------------------')
-    console.log(`Updating user with ID: ${body.id}`);
+    
     if (body.latitude && body.longitude)
     {
       let city = await boundaryAPI.checkBoundaries(body.latitude, body.longitude);
       updates = {
         ...updates,
-        broadcastGroupId: city.id
+        broadcastGroupId: city ? city.id : null
       }
-      console.log(`User is located in: ${city.city}`);
+      if (city === undefined || !city)
+        city = 'UNKNOWN CITY';
+
+      console.log(`[REST Update User] ${body.id} with LONG ${body.longitude}, LAT ${body.latitude} is located in ${city.city}`);
     }
 
     await models.User.update(

@@ -44,14 +44,12 @@ const consumeUserLocationMessage = async (queue) => {
 
     
     channel.assertQueue(queue, {durable: false});
-    channel.consume(queue, (msg) => {
+    channel.consume(queue, async (msg) => {
 
 
       // console.log(" [x] Received %s", msg.content.toString());
       const buffer = Buffer.from(msg.content);
       const locationUpdate = JSON.parse(buffer.toString());
-      
-      console.log(`[REST Server] handle user location message from UUID: ${locationUpdate.id}`);
       API.updateUser(locationUpdate);
 
     }, {noAck: true});
