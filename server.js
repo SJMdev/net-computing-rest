@@ -1,10 +1,13 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const sequelize = require('./database/models/index');
+const express     = require('express');
+const bodyParser  = require('body-parser');
+const sequelize   = require('./database/models/index');
+const receiver    = require('./controllers/receiver');
+
+// ===== Message Receiver =====
+receiver.consumeUserLocationMessage('user-location');
 
 
-
-
+// ===== REST server using Express.js =====
 const app = express();
 app.use(bodyParser.urlencoded({'extended': 'false' }));
 app.use(bodyParser.json());
@@ -13,7 +16,6 @@ app.use(bodyParser.json());
 
 app.use('/api', require('./routes/user'));
 app.use('/api', require('./routes/poi'));
-
 
 
 sequelize
