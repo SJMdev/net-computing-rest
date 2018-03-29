@@ -36,6 +36,11 @@ module.exports = (sequelize, DataTypes) => {
     POI.belongsTo(models.EventType, {
       foreignKey: 'eventTypeId'
     })
+
+    POI.belongsTo(models.BroadcastGroup, {
+      foreignKey: 'broadcastGroupId',
+      allowNull: false
+    })
   };
   return POI;
 };

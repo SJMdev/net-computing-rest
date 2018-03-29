@@ -39,10 +39,6 @@ module.exports = {
         allowNull: true,
         isIP: true
       },
-      broadcastGroupId: {
-        type: Sequelize.UUID,
-        allowNull: true
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

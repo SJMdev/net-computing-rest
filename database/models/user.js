@@ -44,7 +44,12 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {});
   User.associate = function(models) {
-    // associations can be defined here
+    
+    User.belongsTo(models.BroadcastGroup, {
+      foreignKey: 'broadcastGroupId',
+      allowNull: false
+    })
+
   };
   return User;
 };
