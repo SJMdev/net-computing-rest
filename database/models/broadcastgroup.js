@@ -43,12 +43,12 @@ module.exports = (sequelize, DataTypes) => {
   BroadcastGroup.associate = function(models) {
     BroadcastGroup.hasOne(models.User, {
       foreignKey: 'broadcastGroupId',
-      allowNull: false
+      allowNull: true
     })
 
     BroadcastGroup.hasOne(models.POI, {
       foreignKey: 'broadcastGroupId',
-      allowNull: false
+      allowNull: true
     })
   };
   return BroadcastGroup;

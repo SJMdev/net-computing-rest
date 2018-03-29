@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
 
     POI.belongsTo(models.BroadcastGroup, {
       foreignKey: 'broadcastGroupId',
-      allowNull: false
+      allowNull: true
     })
   };
   return POI;

@@ -19,12 +19,12 @@ const broadcastGroups = async () => {
   }
 }
 
-const checkBoundaries = async (latitude, longitude ) => {
+const checkBoundaries = async (latitude, longitude) => {
   let groups = await broadcastGroups();
 
   let selectedGroups = groups.filter((group) => latitude <= group.top && latitude >= group.bottom && longitude >= group.left && longitude <= group.right)
 
-  return selectedGroups[0].city;
+  return (selectedGroups.length !== 0) ?  selectedGroups[0] : null;
 }
 
 module.exports =

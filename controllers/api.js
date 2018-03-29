@@ -5,7 +5,6 @@ const createUser = async (body) => {
   try
   {
     console.log('user created');
-    console.log(body);
     let user = await models.User.create(
       {
         name: body.name,
@@ -25,10 +24,24 @@ const createUser = async (body) => {
 const updateUser = async (body) => {
   try
   {
-    console.log('user updated!');
-    console.log(body)
+    let updates = {
+      ...body
+    }
+
+    console.log('---------------------------------')
+    console.log(`Updating user with ID: ${body.id}`);
+    if (body.latitude && body.longitude)
+    {
+      let city = await boundaryAPI.checkBoundaries(body.latitude, body.longitude);
+      updates = {
+        ...updates,
+        broadcastGroupId: city.id
+      }
+      console.log(`User is located in: ${city.city}`);
+    }
+
     await models.User.update(
-      body, 
+      updates,
       {
         where: { id : body.id }
       }
@@ -61,9 +74,23 @@ const deleteUser = async (body) => {
 const createPOI = async (body) => {
   try
   {
+    let city = await boundaryAPI.checkBoundaries(body.latitude, body.longitude)
+    
+    console.log(body)
+
+    await models.POI.create(
+      {
+        creatorId: body.creatorId,
+        eventTypeId: body.eventTypeId,
+        broadcastGroupId: city.id,
+        expirationDate: new Date() + 3600 * 1000, // add one hour expiration date
+        latitude: body.latitude,
+        longitude: body.longitude,
+        description: body.description,
+      }
+    )
+
     console.log('POI created');
-    let cityName = boundaryAPI.checkBoundaries(body.latitude, body.longitude)
-    console.log(body);
   }
   catch (err)
   {

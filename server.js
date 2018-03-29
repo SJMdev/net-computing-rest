@@ -19,7 +19,7 @@ app.use('/api', require('./routes/poi'));
 sequelize
   .sequelize.authenticate()
   .then(() => {
-    const port = 1337;
+    const port = 3000;
     app.listen(port);
   })
   .catch(err => {

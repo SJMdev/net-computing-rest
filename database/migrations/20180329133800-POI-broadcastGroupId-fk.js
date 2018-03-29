@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.addColumn('POIs', 'broadcastGroupId',
       {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'BroadcastGroups',
           key: 'id'

@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     
     User.belongsTo(models.BroadcastGroup, {
       foreignKey: 'broadcastGroupId',
-      allowNull: false
+      allowNull: true
     })
 
   };
