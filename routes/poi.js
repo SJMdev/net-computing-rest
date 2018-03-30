@@ -32,15 +32,28 @@ router.patch('/poi', async (req, res) => {
 
 });
 
-
-
-router.delete('/poi', async (req, res) => {
+router.delete('/poi/:id', async (req, res) => {
 
   console.log("DELETE POI");
   try
   {
-    await api.deletePOI(req.body);
+    await api.deletePOI(req.params.id);
     res.sendStatus(200);
+  }
+  catch (err)
+  {
+    res.sendStatus(500);
+  }
+
+});
+
+router.get('/poi/:id', async (req, res) => {
+
+  console.log("GET POI");
+  try
+  {
+    let POI = await api.getPOI(req.params.id);
+    res.status(200).json(POI);
   }
   catch (err)
   {

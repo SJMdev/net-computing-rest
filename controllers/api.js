@@ -2,10 +2,33 @@ const models = require('../database/models/index')
 const boundaryAPI = require('./checkboundaries')
 const notifications = require('./poi-notification-sender');
 
+const getUser = async (userId) => {
+  try 
+  {
+    let user = await models.User.findOne(
+      {
+        where: { id: userId },
+        include: [
+          {
+            model: models.BroadcastGroup
+          }
+        ]
+      }
+    )
+    return user.toJSON();
+  }
+  catch (err)
+  {
+    let e = new Error(err);
+    e.name = 'getUser';
+    throw e;
+  }
+}
+
+
 const createUser = async (body) => {
   try
   {
-    console.log('user created');
     let user = await models.User.create(
       {
         name: body.name,
@@ -61,8 +84,6 @@ const updateUser = async (body) => {
       { }
     );
 
-    console.log(`current: ${previousBroadCastGroupId}`);
-    console.log(`new: ${previousUser.dataValues.broadcastGroupId}`);
     if (previousBroadCastGroupId != previousUser.dataValues.broadcastGroupId)
     {
       console.log('CHANGE IN AREA')
@@ -78,11 +99,14 @@ const updateUser = async (body) => {
   }
 }
 
-const deleteUser = async (body) => {
+const deleteUser = async (userId) => {
   try
-  {
-    console.log('user deleted!');
-
+  { 
+    await models.User.destroy(
+      {
+        where: { id: userId }
+      }
+    )
   }
   catch (err)
   {
@@ -93,6 +117,25 @@ const deleteUser = async (body) => {
 }
 
 //-------------POI--------------------
+const getPOI = async (POIId) =>
+{
+  try
+  {
+    let POI = await models.POI.findOne(
+      {
+        where: { id: POIId }
+      }
+    )
+    return POI;
+  }
+  catch (err)
+  {
+    let e = new Error(err);
+    e.name = 'deletePOI';
+    throw e;
+  }
+}
+
 const createPOI = async (body) => {
   try
   {
@@ -127,11 +170,14 @@ const createPOI = async (body) => {
   }
 }
 
-const deletePOI = async (body) => {
+const deletePOI = async (POIId) => {
   try
   {
-    console.log('POI deleted');
-    console.log(body);
+    await models.POI.destroy(
+      {
+        where: { id: POIId }
+      }
+    )
   }
   catch (err)
   {
@@ -162,8 +208,9 @@ module.exports =
   createUser,
   updateUser,
   deleteUser,
+  getUser,
+  getPOI,
   createPOI,
   deletePOI,
-  updatePOI
-
+  updatePOI,
 }

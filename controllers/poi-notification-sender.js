@@ -38,6 +38,9 @@ const sendPOINotification = async (city, msg) => {
     let exchange = 'poi-notification';
 
     let channel = await createChannel();
+
+    console.log(`[REST Send Notification] for topic ${city} with content ${msg}`)
+
     channel.assertExchange(exchange, 'direct', {durable: false});
     channel.publish(exchange, city, Buffer.from(JSON.stringify(msg)));
 
