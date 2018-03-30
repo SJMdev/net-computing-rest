@@ -1,5 +1,6 @@
 const models = require('../database/models/index')
 const boundaryAPI = require('./checkboundaries')
+const notifications = require('./poi-notification-sender');
 
 const createUser = async (body) => {
   try
@@ -28,6 +29,7 @@ const updateUser = async (body) => {
       ...body
     }
 
+    let cityName = null;
     
     if (body.latitude && body.longitude)
     {
@@ -36,18 +38,36 @@ const updateUser = async (body) => {
         ...updates,
         broadcastGroupId: city ? city.id : null
       }
+
       if (city === undefined || !city)
+      {
         city = 'UNKNOWN CITY';
+        cityName = city;
+      }
+      else
+        cityName = city.city;
 
       console.log(`[REST Update User] ${body.id} with LONG ${body.longitude}, LAT ${body.latitude} is located in ${city.city}`);
     }
 
-    await models.User.update(
+    let previousUser = await models.User.findOne({
+      where: { id: body.id }
+    })
+
+    let previousBroadCastGroupId = previousUser.dataValues.broadcastGroupId;
+
+    await previousUser.update(
       updates,
-      {
-        where: { id : body.id }
-      }
+      { }
     );
+
+    console.log(`current: ${previousBroadCastGroupId}`);
+    console.log(`new: ${previousUser.dataValues.broadcastGroupId}`);
+    if (previousBroadCastGroupId != previousUser.dataValues.broadcastGroupId)
+    {
+      console.log('CHANGE IN AREA')
+      notifications.sendNewBroadcastGroup(body.id, cityName);
+    }
 
   }
   catch (err)
@@ -77,14 +97,12 @@ const createPOI = async (body) => {
   try
   {
     let city = await boundaryAPI.checkBoundaries(body.latitude, body.longitude)
-    
-    console.log(body)
 
     await models.POI.create(
       {
         creatorId: body.creatorId,
         eventTypeId: body.eventTypeId,
-        broadcastGroupId: city.id,
+        broadcastGroupId: city ? city.id : null,
         expirationDate: new Date() + 3600 * 1000, // add one hour expiration date
         latitude: body.latitude,
         longitude: body.longitude,
@@ -92,11 +110,18 @@ const createPOI = async (body) => {
       }
     )
 
+    if (city)
+    {
+      console.log('[REST POI Created] send notification to user')
+      notifications.sendPOINotification(city.city, body);
+    }
     console.log('POI created');
+
   }
   catch (err)
   {
     let e = new Error(err);
+    console.log(err)
     e.name = 'createPOI';
     throw e;
   }

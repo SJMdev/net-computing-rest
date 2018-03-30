@@ -43,16 +43,18 @@ const consumeUserLocationMessage = async (queue) => {
     let channel = await createChannel();
 
     
-    channel.assertQueue(queue, {durable: false});
+    channel.assertQueue(queue, {durable: true});
     channel.consume(queue, async (msg) => {
 
 
       // console.log(" [x] Received %s", msg.content.toString());
       const buffer = Buffer.from(msg.content);
       const locationUpdate = JSON.parse(buffer.toString());
-      API.updateUser(locationUpdate);
+      await API.updateUser(locationUpdate);
 
-    }, {noAck: true});
+      channel.ack(msg);
+
+    }, {noAck: false});
 
 
   }
