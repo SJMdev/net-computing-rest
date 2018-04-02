@@ -62,4 +62,16 @@ router.get('/poi/:id', async (req, res) => {
 
 });
 
+router.get('/pois', async (req, res) => {
+  try
+  {
+    let POIs = await api.getPOIs();
+    return res.status(200).json(POIs);
+  }
+  catch (err)
+  {
+    res.sendStatus(500);
+  }
+})
+
 module.exports = router;

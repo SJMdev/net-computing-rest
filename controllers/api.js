@@ -131,7 +131,25 @@ const getPOI = async (POIId) =>
   catch (err)
   {
     let e = new Error(err);
-    e.name = 'deletePOI';
+    e.name = 'getPOI';
+    throw e;
+  }
+}
+
+const getPOIs = async () => {
+  try
+  {
+    let POIs = await models.POI.findAll(
+      {
+        where: {}
+      }
+    )
+    return POIs;
+  }
+  catch (err)
+  {
+    let e = new Error(err);
+    e.name = 'getPOIs';
     throw e;
   }
 }
@@ -190,8 +208,12 @@ const deletePOI = async (POIId) => {
 const updatePOI = async (body) => {
   try
   {
-    console.log('POI updated');
-    console.log(body);
+    await models.POI.update(
+      body,
+      {
+        where: body.id
+      }
+    )
   }
   catch (err)
   {
@@ -213,4 +235,5 @@ module.exports =
   createPOI,
   deletePOI,
   updatePOI,
+  getPOIs
 }
